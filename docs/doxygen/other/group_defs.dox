@@ -1,0 +1,7 @@
+/*!
+ * \defgroup block GNU Radio CELEC C++ Signal Processing Blocks
+ * \brief All C++ blocks that can be used from the CELEC GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ */
+
