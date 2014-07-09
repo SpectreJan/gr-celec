@@ -24,12 +24,14 @@
 
 #include <gnuradio/io_signature.h>
 #include "gen_viterbi_fi_impl.h"
+#include <stdio.h>
 
 namespace gr {
   namespace celec {
 
     gen_viterbi_fi::sptr
-    gen_viterbi_fi::make(int N, int S, int K, int S0, int SK, int *OS)
+    gen_viterbi_fi::make(const int N, const int S, const int K, 
+                         const int S0, const  int SK,  const std::vector<int> &OS)
     {
       return gnuradio::get_initial_sptr
         (new gen_viterbi_fi_impl(N, S, K, S0, SK, OS));
@@ -38,10 +40,12 @@ namespace gr {
     /*
      * The private constructor
      */
-    gen_viterbi_fi_impl::gen_viterbi_fi_impl(int N, int S, int K, int S0, int SK, int *OS)
+    gen_viterbi_fi_impl::gen_viterbi_fi_impl(const int N, const int S,
+                                             const int K, const int S0,
+                                             const int SK, const std::vector<int> &OS)
       : gr::block("gen_viterbi_fi",
               gr::io_signature::make(1, 1, sizeof(float)),
-              gr::io_signature::make(1, 1, sizeof(unsigned int))),
+              gr::io_signature::make(1, 1, sizeof(unsigned char))),
         d_N(N), // Number of Codebits in Codeword
         d_S(S), // Number of Encoderstates
         d_K(K), // Trellislength
@@ -49,9 +53,8 @@ namespace gr {
         d_SK(SK), // Termination State
         d_OS(OS) // Output Matrix
     {
-      
-      set_output_multiple(d_K);
-      set_relative_rate(1/(1<<d_N));
+      set_output_multiple(d_K); // Make sure
+      set_relative_rate(1/((1<<d_N)));
     }
 
     /*
@@ -64,7 +67,7 @@ namespace gr {
     void
     gen_viterbi_fi_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
-        ninput_items_required[0] = noutput_items * (1<<d_N);
+        ninput_items_required[0] = noutput_items * ((1<<d_N));
     }
 
     int
@@ -74,13 +77,15 @@ namespace gr {
                        gr_vector_void_star &output_items)
     {
         const float *in = (float*) input_items[0];
-        unsigned int *out = (unsigned int *) output_items[0];
+        unsigned char *out = (unsigned char *) output_items[0];
 
-        int nblocks = noutput_items / d_K; // Number of complete Packets  
+        int nblocks = noutput_items / (d_K); // Number of complete Packets  
         for(int n = 0; n < nblocks; n++)
         {
-          viterbi_fi::viterbi_fi(d_S, d_K, 0, d_OS, in, out);
+          viterbi_fi::viterbi_fi(d_S, d_K, 0, d_SK, d_OS, in, out);
         }
+
+        printf("\n");
         // Tell runtime system how many input items we consumed on
         // each input stream.
         consume_each (noutput_items);

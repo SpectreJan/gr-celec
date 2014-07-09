@@ -25,6 +25,7 @@
 #include <celec/api.h>
 #include <gnuradio/block.h>
 #include <celec/viterbi.h>
+#include <vector>
 
 namespace gr {
   namespace celec {
@@ -47,7 +48,8 @@ namespace gr {
        * class. celec::gen_viterbi_fi::make is the public interface for
        * creating new instances.
        */
-      static sptr make(int N, int S, int K, int S0, int SK, int *OS);
+      static sptr make(const int N, const int S, const int K,
+                       const int S0, const int SK, const std::vector<int> &OS);
     };
 
   } // namespace celec

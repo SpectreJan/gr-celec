@@ -20,11 +20,12 @@
 
  #ifndef INCLUDED_VITERBI_H
  #define INCLUDED_VITERBI_H
+ #include <vector>
 
 namespace gr{
   namespace celec{
     namespace viterbi_fi{
-      void viterbi_fi(const int S, const int K, const int S0, const int *OS, const float *in, unsigned int *out);
+      void viterbi_fi(const int S, const int K, const int S0, int SK, const std::vector<int> &OS, const float *in, unsigned char *out);
     }
   } // namespace celec
 } // namespace gr

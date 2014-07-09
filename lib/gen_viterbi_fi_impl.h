@@ -35,10 +35,11 @@ namespace gr {
       int d_K;
       int d_S0;
       int d_SK;
-      int *d_OS;
+      const std::vector<int> d_OS;
 
      public:
-      gen_viterbi_fi_impl(int N, int S, int K, int S0, int SK, int *OS);
+      gen_viterbi_fi_impl(const int N, const int S, const int K,
+                          const int S0, const int SK, const std::vector<int> &OS);
       ~gen_viterbi_fi_impl();
       int N() { return d_N; }
       int S() { return d_S; }
