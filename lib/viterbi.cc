@@ -28,57 +28,61 @@ namespace gr {
   namespace celec{
     namespace viterbi_fi{
       void traceback(unsigned char* trace, unsigned char *data, 
-                     const int S, const int SK , const int K)
+                     const int k, const int end_state , const int frame_size)
       {
-        int s = SK;
-        for(int k = K-1; k >= 0; k--)    // 8 Bit per char!!
+        int s = end_state;
+        for(int i = frame_size-1; i >= 0; i--)
         { 
-          int input = trace[k*S+s];
-          //printf("State at %d: %d\n", k, s);
-          data[k] = (s >= (S/2));
-          //printf("Data[%d]: %d\n", k, data[k]);
-          //printf("Trace: %d Input[%d]: %d\n", trace[(k*S+s)], k, input);  
+          int input = trace[i*(1<<(k-1))+s];
+          data[i] = (s >> (k-2)) &1;  
           s = ((s<<1)| input )&15;
 
         }
       }
 
-      void viterbi_fi(const int S, const int K, const int S0, int SK, const std::vector<int> &OS, const float *in, unsigned char *out)
+      void viterbi_fi(const int s, const int k, 
+                      const int frame_size, const int start_state, 
+                      int end_state, const std::vector<int> &OS, 
+                      const float *in, unsigned char *out)
       {
-        int s,k; // Counting variable for all States
+        int state; // Counting variable for all States
         size_t align = volk_fec_get_alignment();
         float min = INF;
 
-        // Allocate Memory for packed trace matrix
+        // Allocate Memory for trace matrix
         unsigned char *trace;
-        trace = (unsigned char*) volk_fec_malloc((sizeof(unsigned char)*S*K), align); // Pack 32 bit into one unsigned int
-        // Initial alpha state that is given to the kernel (maybe^^)
-        float *alpha;
-        alpha = (float*) volk_fec_malloc(sizeof(float)*S*2, align);
+        trace = (unsigned char*) volk_fec_malloc((sizeof(unsigned char)*s*frame_size), align);
         
-
-        for(s = 0; s < S*2; s++)
+        // Initial metrics state that is given to the kernel (maybe^^)
+        float *alpha;
+        alpha = (float*) volk_fec_malloc(sizeof(float)*s*2, align);
+        
+        // Initialize first Column of metrics;
+        for(state = 0; state < s*2; state++)
         {
-          alpha[s] = INF; // Initialize first Column of A;
+          alpha[state] = INF;
         }
-        alpha[S0] = 0;
+        alpha[start_state] = 0;
 
-        volk_fec_32f_x2_s32f_32i_viterbi_metric_32i_manual(trace, alpha, in ,K, &OS[0], S, "generic");
+        volk_fec_32f_x2_s32f_32i_viterbi_metric_32i_manual(trace, alpha, in , frame_size, &OS[0], s, "generic");
 
-        if( SK == -1)
+        // get endstate
+        if( end_state == -1)
         {  
-          for(s = 0; s < S; s++)
+          for(state = 0; state < s; state++)
           {
-            if(alpha[s] < min)
+            if(alpha[state] < min)
             {
-              min = alpha[s];
-              SK = s;
+              min = alpha[state];
+              end_state = state;
             }  
           }
         }
 
         // Traceback
-        traceback(trace, out, S, SK, K);
+        traceback(trace, out, k, end_state, frame_size);
+
+
         volk_fec_free(alpha);
         volk_fec_free(trace);
       }

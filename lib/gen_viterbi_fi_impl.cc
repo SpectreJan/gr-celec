@@ -40,21 +40,22 @@ namespace gr {
     /*
      * The private constructor
      */
-    gen_viterbi_fi_impl::gen_viterbi_fi_impl(const int N, const int S,
-                                             const int K, const int S0,
-                                             const int SK, const std::vector<int> &OS)
+    gen_viterbi_fi_impl::gen_viterbi_fi_impl(const int n, const int k,
+                                             const int frame_size, const int start_state,
+                                             const int end_state, const std::vector<int> &OS)
       : gr::block("gen_viterbi_fi",
               gr::io_signature::make(1, 1, sizeof(float)),
               gr::io_signature::make(1, 1, sizeof(unsigned char))),
-        d_N(N), // Number of Codebits in Codeword
-        d_S(S), // Number of Encoderstates
-        d_K(K), // Trellislength
-        d_S0(S0), // Initial State
-        d_SK(SK), // Termination State
+        d_n(n), // Number of Codebits in Codeword
+        d_s(1<<(k-1)), // Number of Encoderstates
+        d_k(k),   // constraint length
+        d_frame_size(frame_size), // Trellislength
+        d_start_state(start_state), // Initial State
+        d_end_state(end_state), // Termination State
         d_OS(OS) // Output Matrix
     {
-      set_output_multiple(d_K); // Make sure
-      set_relative_rate(1/((1<<d_N)));
+      set_output_multiple(d_frame_size); // Make sure
+      set_relative_rate(1/((1<<d_n)));
     }
 
     /*
@@ -67,7 +68,7 @@ namespace gr {
     void
     gen_viterbi_fi_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
-        ninput_items_required[0] = noutput_items * ((1<<d_N));
+        ninput_items_required[0] = noutput_items * ((1<<d_n));
     }
 
     int
@@ -79,10 +80,10 @@ namespace gr {
         const float *in = (float*) input_items[0];
         unsigned char *out = (unsigned char *) output_items[0];
 
-        int nblocks = noutput_items / (d_K); // Number of complete Packets  
+        int nblocks = noutput_items / (d_frame_size); // Number of complete Packets  
         for(int n = 0; n < nblocks; n++)
         {
-          viterbi_fi::viterbi_fi(d_S, d_K, 0, d_SK, d_OS, in, out);
+          viterbi_fi::viterbi_fi(d_s, d_k, d_frame_size, 0, d_end_state, d_OS, in, out);
         }
 
         printf("\n");

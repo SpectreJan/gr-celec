@@ -65,7 +65,7 @@ class qa_gen_viterbi_fi (gr_unittest.TestCase):
 
         # Decoder
         metrics = trellis.metrics_c(4, 1, sym_table.points(), digital.TRELLIS_EUCLIDEAN) 
-        viterbi_cel = celec.gen_viterbi_fi(2, 16, K, 0,-1, os)
+        viterbi_cel = celec.gen_viterbi_fi(2, 5, K, 0,-1, os)
 
         # Sinks
         tx_sink = blocks.vector_sink_s(1)

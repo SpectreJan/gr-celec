@@ -48,8 +48,9 @@ namespace gr {
        * class. celec::gen_viterbi_fi::make is the public interface for
        * creating new instances.
        */
-      static sptr make(const int N, const int S, const int K,
-                       const int S0, const int SK, const std::vector<int> &OS);
+      static sptr make(const int n, const int k, const int frame_size,
+                       const int start_state, const int end_state, 
+                       const std::vector<int> &OS);
     };
 
   } // namespace celec

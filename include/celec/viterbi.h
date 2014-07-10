@@ -25,7 +25,9 @@
 namespace gr{
   namespace celec{
     namespace viterbi_fi{
-      void viterbi_fi(const int S, const int K, const int S0, int SK, const std::vector<int> &OS, const float *in, unsigned char *out);
+      void viterbi_fi(const int S, const int k, const int K, 
+                      const int S0, int SK, const std::vector<int> &OS,
+                      const float *in, unsigned char *out);
     }
   } // namespace celec
 } // namespace gr

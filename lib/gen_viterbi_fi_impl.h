@@ -30,22 +30,24 @@ namespace gr {
     class gen_viterbi_fi_impl : public gen_viterbi_fi
     {
      private:
-      int d_N;
-      int d_S;
-      int d_K;
-      int d_S0;
-      int d_SK;
-      const std::vector<int> d_OS;
+      int d_n; // Inverse Coderate
+      int d_k; // Constraint length
+      int d_s; // Number of States
+      int d_frame_size; 
+      int d_start_state;
+      int d_end_state;
+      const std::vector<int> d_OS; // Output Symbols
 
      public:
-      gen_viterbi_fi_impl(const int N, const int S, const int K,
-                          const int S0, const int SK, const std::vector<int> &OS);
+      gen_viterbi_fi_impl(const int n, const int k, const int frame_size,
+                          const int start_state, const int end_state, 
+                          const std::vector<int> &OS);
       ~gen_viterbi_fi_impl();
-      int N() { return d_N; }
-      int S() { return d_S; }
-      int K() { return d_K; }
-      int SK() { return d_SK; }
-      int S0() { return d_S0; }
+      int rate() { return d_n; }
+      int s() { return d_s; }
+      int frame_size() { return d_frame_size; }
+      int end_state() { return d_end_state; }
+      int start_state() { return d_start_state; }
 
       // Where all the action really happens
       void forecast (int noutput_items, gr_vector_int &ninput_items_required);
