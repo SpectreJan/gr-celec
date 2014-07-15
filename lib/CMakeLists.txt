@@ -30,6 +30,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND celec_sources
     viterbi.cc
     gen_viterbi_fi_impl.cc
+    metric_c_impl.cc
 )
 
 set(celec_sources "${celec_sources}" PARENT_SCOPE)
@@ -66,6 +67,7 @@ include_directories(${CPPUNIT_INCLUDE_DIRS})
 list(APPEND test_celec_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/test_celec.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_celec.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_metric_c.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_gen_viterbi_fi.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/)
 

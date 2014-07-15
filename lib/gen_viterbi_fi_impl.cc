@@ -54,7 +54,7 @@ namespace gr {
         d_end_state(end_state), // Termination State
         d_OS(OS) // Output Matrix
     {
-      set_output_multiple(d_frame_size); // Make sure
+      set_output_multiple(d_frame_size); // Make sure that output is multiple of the packet length
       set_relative_rate(1/((1<<d_n)));
     }
 
@@ -80,13 +80,13 @@ namespace gr {
         const float *in = (float*) input_items[0];
         unsigned char *out = (unsigned char *) output_items[0];
 
+        //printf("Nooutput length: %d\n", noutput_items);
         int nblocks = noutput_items / (d_frame_size); // Number of complete Packets  
         for(int n = 0; n < nblocks; n++)
         {
-          viterbi_fi::viterbi_fi(d_s, d_k, d_frame_size, 0, d_end_state, d_OS, in, out);
+          viterbi_fi::viterbi_fi(d_s, d_k, d_frame_size, 0, d_end_state, d_OS, &in[n*d_frame_size], out);
         }
 
-        printf("\n");
         // Tell runtime system how many input items we consumed on
         // each input stream.
         consume_each (noutput_items);

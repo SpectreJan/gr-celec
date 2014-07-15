@@ -17,5 +17,6 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 install(FILES
-    celec_gen_viterbi_fi.xml DESTINATION share/gnuradio/grc/blocks
+    celec_gen_viterbi_fi.xml
+    celec_metric_c.xml DESTINATION share/gnuradio/grc/blocks
 )

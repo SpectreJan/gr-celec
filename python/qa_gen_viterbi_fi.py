@@ -44,28 +44,27 @@ class qa_gen_viterbi_fi (gr_unittest.TestCase):
 
     def test_001_t (self):
         # Trellislength
-        K = 1024
+        K = 2072
         fsm = fsm_args["awgn1o2_16"]
 
         os = numpy.array(fsm[4], dtype=int) 
         # Setup dummy data
-        data = numpy.random.randint(0,2, K)
-        #termination = numpy.zeros(8)
-        #data = numpy.concatenate((data, termination),1)
+        data = numpy.random.randint(0,2, K-8)
+        termination = numpy.zeros(8)
+        data = numpy.concatenate((data, termination),1)
 
         #data = numpy.array([1,1,0,1,1,0,1,1])
         sym_table = digital.constellation_qpsk()
         # Setup blocks
         data_src = blocks.vector_source_s(map(int, data))
-
         src_head = blocks.head(gr.sizeof_short*1, K)
         # TX Sim
         encoder = trellis.encoder_ss(trellis.fsm(*fsm), 0)
         modulator = digital.chunks_to_symbols_sc(sym_table.points(), 1)
 
         # Decoder
-        metrics = trellis.metrics_c(4, 1, sym_table.points(), digital.TRELLIS_EUCLIDEAN) 
-        viterbi_cel = celec.gen_viterbi_fi(2, 5, K, 0,-1, os)
+        metrics = celec.metric_c(4, sym_table.points()) 
+        viterbi_cel = celec.gen_viterbi_fi(2, 5, K, 0, -1, os)
 
         # Sinks
         tx_sink = blocks.vector_sink_s(1)

@@ -27,7 +27,7 @@
 namespace gr {
   namespace celec{
     namespace viterbi_fi{
-      void traceback(unsigned char* trace, unsigned char *data, 
+      void traceback(unsigned int* trace, unsigned char *data, 
                      const int k, const int end_state , const int frame_size)
       {
         int s = end_state;
@@ -50,15 +50,15 @@ namespace gr {
         float min = INF;
 
         // Allocate Memory for trace matrix
-        unsigned char *trace;
-        trace = (unsigned char*) volk_fec_malloc((sizeof(unsigned char)*s*frame_size), align);
+        unsigned int *trace;
+        trace = (unsigned int*) volk_fec_malloc((sizeof(unsigned int)*s*frame_size), align);
         
         // Initial metrics state that is given to the kernel (maybe^^)
         float *alpha;
         alpha = (float*) volk_fec_malloc(sizeof(float)*s*2, align);
         
         // Initialize first Column of metrics;
-        for(state = 0; state < s*2; state++)
+        for(state = 0; state < s; state++)
         {
           alpha[state] = INF;
         }
@@ -79,10 +79,13 @@ namespace gr {
           }
         }
 
+        printf("EndState: %d\n", end_state);
         // Traceback
         traceback(trace, out, k, end_state, frame_size);
-
-
+        for (int i = 0; i < s; ++i)
+        {
+          printf("Alpha_out[%d]: %f\n", i, alpha[i]);
+        }
         volk_fec_free(alpha);
         volk_fec_free(trace);
       }

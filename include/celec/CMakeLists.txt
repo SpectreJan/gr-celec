@@ -22,5 +22,6 @@
 ########################################################################
 install(FILES
     api.h
-    gen_viterbi_fi.h DESTINATION include/celec
+    gen_viterbi_fi.h
+    metric_c.h DESTINATION include/celec
 )
