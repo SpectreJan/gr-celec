@@ -49,7 +49,8 @@ namespace gr {
        * creating new instances.
        */
       static sptr make(const int n, const int k, const int frame_size,
-                       const int start_state, const int end_state, 
+                       const int start_state, const int end_state,
+                       const std::vector<gr_complex> &Table,   
                        const std::vector<int> &OS);
     };
 

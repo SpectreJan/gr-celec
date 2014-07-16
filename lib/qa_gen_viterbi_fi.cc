@@ -36,7 +36,7 @@ namespace gr {
     void
     qa_gen_viterbi_fi::t1()
     {
-      int vlen = 4091;  // 3072 Infowords
+      int vlen = 1024;  // 3072 Infowords
       int iters = 1;
       int S = 16;  // 16 States
       int O = 4;  // 4 Output Symbols

@@ -73,7 +73,7 @@ namespace gr {
         float *out = (float *) output_items[0];
         volk_fec_32fc_x2_calc_euclidean_metric_32f_manual(&(out[0]), &(in[0]), 
                                              &d_Table[0], d_O, 
-                                             noutput_items/d_O, "a_sse4");
+                                             noutput_items/d_O, "generic");
         consume_each (noutput_items/d_O);        
 
         // Tell runtime system how many output items we produced.

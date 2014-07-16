@@ -30,11 +30,15 @@ namespace gr {
   namespace celec {
 
     gen_viterbi_fi::sptr
-    gen_viterbi_fi::make(const int N, const int S, const int K, 
-                         const int S0, const  int SK,  const std::vector<int> &OS)
+    gen_viterbi_fi::make(const int n, const int k, const int frame_size, 
+                         const int start_state, const  int end_state,  
+                         const std::vector<gr_complex> &Table,
+                         const std::vector<int> &OS)
     {
       return gnuradio::get_initial_sptr
-        (new gen_viterbi_fi_impl(N, S, K, S0, SK, OS));
+        (new gen_viterbi_fi_impl(n, k, frame_size, 
+                                 start_state, end_state,
+                                 Table, OS));
     }
 
     /*
@@ -42,9 +46,11 @@ namespace gr {
      */
     gen_viterbi_fi_impl::gen_viterbi_fi_impl(const int n, const int k,
                                              const int frame_size, const int start_state,
-                                             const int end_state, const std::vector<int> &OS)
+                                             const int end_state, 
+                                             const std::vector<gr_complex> &Table,
+                                             const std::vector<int> &OS)
       : gr::block("gen_viterbi_fi",
-              gr::io_signature::make(1, 1, sizeof(float)),
+              gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(1, 1, sizeof(unsigned char))),
         d_n(n), // Number of Codebits in Codeword
         d_s(1<<(k-1)), // Number of Encoderstates
@@ -52,10 +58,11 @@ namespace gr {
         d_frame_size(frame_size), // Trellislength
         d_start_state(start_state), // Initial State
         d_end_state(end_state), // Termination State
-        d_OS(OS) // Output Matrix
+        d_OS(OS), // Output Matrix
+        d_Table(Table)
     {
       set_output_multiple(d_frame_size); // Make sure that output is multiple of the packet length
-      set_relative_rate(1/((1<<d_n)));
+      //set_relative_rate(1/((1<<d_n)));
     }
 
     /*
@@ -68,7 +75,7 @@ namespace gr {
     void
     gen_viterbi_fi_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
-        ninput_items_required[0] = noutput_items * ((1<<d_n));
+        ninput_items_required[0] = noutput_items;
     }
 
     int
@@ -77,14 +84,17 @@ namespace gr {
                        gr_vector_const_void_star &input_items,
                        gr_vector_void_star &output_items)
     {
-        const float *in = (float*) input_items[0];
+        const gr_complex *in = (gr_complex*) input_items[0];
         unsigned char *out = (unsigned char *) output_items[0];
 
         //printf("Nooutput length: %d\n", noutput_items);
-        int nblocks = noutput_items / (d_frame_size); // Number of complete Packets  
+        int nblocks = noutput_items / (d_frame_size); // Number of complete Packets 
+        int ncode_words = 1<<d_n; 
         for(int n = 0; n < nblocks; n++)
         {
-          viterbi_fi::viterbi_fi(d_s, d_k, d_frame_size, 0, d_end_state, d_OS, &in[n*d_frame_size], out);
+          viterbi_fi::viterbi_fi(d_s, d_k, ncode_words, d_frame_size, 0, 
+                                 d_end_state, d_OS, d_Table, 
+                                 &in[n*d_frame_size], out);
         }
 
         // Tell runtime system how many input items we consumed on

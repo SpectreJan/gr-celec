@@ -34,9 +34,10 @@ class qa_metric_c (gr_unittest.TestCase):
 
     def test_001_t (self):
         # set up fg
-        K = 32
-        table = [1+0j, 0+1j, -1+0j, 0-1j]
-        data = numpy.zeros(K)
+        K = 24
+        table = [0.707+0.707j, 0.707-0.707j, -0.707+0.707j, -0.707-0.707j]
+        data = numpy.ones(K) * (0.707+0.707j)
+        #print data
         expected_data = numpy.ones(K)
 
         data_src = blocks.vector_source_c(data)
@@ -50,9 +51,10 @@ class qa_metric_c (gr_unittest.TestCase):
         self.tb.run ()
 
         rx_output = numpy.array(sink.data())
-        for k in range(0, K):
+        #print rx_output
+        #for k in range(0, K*4):
             #self.assertEqual(float(expected_data), float(rx_output))        
-            print rx_output
+            #print rx_output[k]
         # check data
 
 
