@@ -32,7 +32,7 @@ namespace gr {
     void
     qa_metric_c::t1()
     {
-      int num_symbols = 128;
+      int num_symbols = 3072;
       int O = 4;
       gr_complex symbols[] = {0+1j,0-1j, 1+0j, -1+0j};
       int num_runs = 1;      

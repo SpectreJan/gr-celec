@@ -50,40 +50,44 @@ class qa_gen_viterbi_fi (gr_unittest.TestCase):
         os = numpy.array(fsm[4], dtype=int) 
         # Setup dummy data
         #data = [1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0]
-        data = numpy.random.randint(0,2,K)
+        #data = numpy.random.randint(0,2,K)
         #termination = numpy.zeros(4)
         #data = numpy.concatenate((data, termination),1)
 
+        throt = blocks.throttle(1, 32000)
         #data = numpy.array([1,1,0,1,1,0,1,1])
         sym_table = digital.constellation_qpsk()
         #print sym_table.points()
         # Setup blocks
-        data_src = blocks.vector_source_s(map(int, data))
-        src_head = blocks.head(gr.sizeof_short*1, K)
+        #data_src = blocks.vector_source_s(map(int, data))
+        data_src = blocks.file_source(1, "SG.jpeg", 0)
+        #src_head = blocks.head(gr.sizeof_short*1, K)
         # TX Sim
-        encoder = trellis.encoder_ss(trellis.fsm(*fsm), 0)
-        modulator = digital.chunks_to_symbols_sc(sym_table.points(), 1)
+        p2up = blocks.packed_to_unpacked_bb(1, 0)
+        encoder = trellis.encoder_bb(trellis.fsm(*fsm), 0)
+        modulator = digital.chunks_to_symbols_bc(sym_table.points(), 1)
 
         # Decoder
-        viterbi_cel = celec.gen_viterbi_fi(2, 5, K, 0, -1, 
+        viterbi_cel = celec.gen_viterbi_fi(2, 5, 9317*8, 0, -1, 
                                            sym_table.points(), os)
 
         # Sinks
+        up2p = blocks.unpacked_to_packed_bb(1, 0)
         tx_sink = blocks.vector_sink_s(1)
         rx_sink = blocks.vector_sink_b(1)
-
+        file_sink = blocks.file_sink(1, "decoded_SG.jpeg")
         # Connections
-        self.tb.connect(data_src, src_head, encoder)
+        self.tb.connect(data_src, throt, p2up, encoder)
         self.tb.connect(encoder, modulator)
         self.tb.connect(modulator, viterbi_cel)
-        self.tb.connect(viterbi_cel, rx_sink)
-        self.tb.connect(src_head, tx_sink);
+        self.tb.connect(viterbi_cel, up2p, file_sink)
+        #self.tb.connect(src_head, tx_sink);
         self.tb.run ()
         
         # # Check data
-        rx_output = numpy.array(rx_sink.data())
-        for k in range(0, K):
-            self.assertEqual(int(rx_output[k]), int(data[k]))
+        #rx_output = numpy.array(rx_sink.data())
+        #for k in range(0, K):
+        #    self.assertEqual(int(rx_output[k]), int(data[k]))
 
 if __name__ == '__main__':
     gr_unittest.run(qa_gen_viterbi_fi, "qa_gen_viterbi_fi.xml")

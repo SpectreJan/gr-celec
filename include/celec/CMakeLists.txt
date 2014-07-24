@@ -23,5 +23,6 @@
 install(FILES
     api.h
     gen_viterbi_fi.h
-    metric_c.h DESTINATION include/celec
+    metric_c.h
+    max_log_map_f.h DESTINATION include/celec
 )

@@ -3,43 +3,48 @@
   <key>celec_gen_viterbi_fi</key>
   <category>CELEC</category>
   <import>import celec</import>
-  <make>celec.gen_viterbi_fi($N, $S, $K, $S0, $SK, $OS)</make>
+  <make>celec.gen_viterbi_fi($N, $S, $K, $S0, $SK, $Table, $OS)</make>
   <param>
-    <name>N</name>
+    <name>Rate</name>
     <key>N</key>
     <type>int</type>
   </param>
   <param>
-    <name>S</name>
+    <name>Encoder Length</name>
     <key>S</key>
     <type>int</type>
   </param>
   <param>
-    <name>K</name>
+    <name>Packet Length</name>
     <key>K</key>
     <type>int</type>
   </param>
   <param>
-    <name>S0</name>
+    <name>Start State</name>
     <key>S0</key>
     <type>int</type>
   </param>
   <param>
-    <name>Sk</name>
+    <name>End State</name>
     <key>SK</key>
     <type>int</type>
   </param>
   <param>
-    <name>Os</name>
+    <name>Table</name>
+    <key>Table</key>
+    <type>complex_vector</type>
+  </param>
+  <param>
+    <name>Output Matrix</name>
     <key>OS</key>
     <type>int_vector</type>
   </param>
   <sink>
     <name>in</name>
-    <type>float</type>
+    <type>complex</type>
   </sink>
   <source>
     <name>out</name>
-    <type>unsigned char</type>
+    <type>byte</type>
   </source>
 </block>

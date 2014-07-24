@@ -29,6 +29,7 @@
 
 #include "qa_gen_viterbi_fi.h"
 #include "qa_metric_c.h"
+#include "qa_max_log_map_f.h"
 
 CppUnit::TestSuite *
 qa_celec::suite()
@@ -37,6 +38,7 @@ qa_celec::suite()
 
   s->addTest(gr::celec::qa_gen_viterbi_fi::suite());
   s->addTest(gr::celec::qa_metric_c::suite());
+  s->addTest(gr::celec::qa_max_log_map_f::suite());
 
   return s;
 }

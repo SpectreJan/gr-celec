@@ -19,43 +19,40 @@
  */
 
 
-#ifndef INCLUDED_CELEC_GEN_VITERBI_FI_H
-#define INCLUDED_CELEC_GEN_VITERBI_FI_H
+#ifndef INCLUDED_CELEC_MAX_LOG_MAP_F_H
+#define INCLUDED_CELEC_MAX_LOG_MAP_F_H
 
 #include <celec/api.h>
 #include <gnuradio/block.h>
-#include <celec/viterbi.h>
-#include <vector>
 
 namespace gr {
   namespace celec {
 
     /*!
-     * \brief Generic Rate 1/n Viterbi Decoder
+     * \brief Max Log Map Decoder
      * \ingroup celec
      *
      */
-    class CELEC_API gen_viterbi_fi : virtual public gr::block
+    class CELEC_API max_log_map_f : virtual public gr::block
     {
      public:
-      typedef boost::shared_ptr<gen_viterbi_fi> sptr;
+      typedef boost::shared_ptr<max_log_map_f> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of celec::gen_viterbi_fi.
+       * \brief Return a shared_ptr to a new instance of celec::max_log_map_f.
        *
-       * To avoid accidental use of raw pointers, celec::gen_viterbi_fi's
+       * To avoid accidental use of raw pointers, celec::max_log_map_f's
        * constructor is in a private implementation
-       * class. celec::gen_viterbi_fi::make is the public interface for
+       * class. celec::max_log_map_f::make is the public interface for
        * creating new instances.
        */
-      static sptr make(const int n, const int k, const int frame_size,
-                       const int start_state, const int end_state,
-                       const std::vector<gr_complex> &Table,   
-                       const std::vector<int> &OS);
+      static sptr make(const int n, const int k, const int frame_size, 
+                       const int start_state, const int end_state, 
+                       const char produce_bits, const std::vector<int> &OS);
     };
 
   } // namespace celec
 } // namespace gr
 
-#endif /* INCLUDED_CELEC_GEN_VITERBI_FI_H */
+#endif /* INCLUDED_CELEC_MAX_LOG_MAP_F_H */
 

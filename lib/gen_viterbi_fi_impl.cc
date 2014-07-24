@@ -88,7 +88,7 @@ namespace gr {
         unsigned char *out = (unsigned char *) output_items[0];
 
         //printf("Nooutput length: %d\n", noutput_items);
-        int nblocks = noutput_items / (d_frame_size); // Number of complete Packets 
+        int nblocks = noutput_items/d_frame_size; // Number of complete Packets 
         int ncode_words = 1<<d_n; 
         for(int n = 0; n < nblocks; n++)
         {

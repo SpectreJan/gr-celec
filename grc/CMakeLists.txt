@@ -18,5 +18,6 @@
 # Boston, MA 02110-1301, USA.
 install(FILES
     celec_gen_viterbi_fi.xml
-    celec_metric_c.xml DESTINATION share/gnuradio/grc/blocks
+    celec_metric_c.xml
+    celec_max_log_map_f.xml DESTINATION share/gnuradio/grc/blocks
 )
