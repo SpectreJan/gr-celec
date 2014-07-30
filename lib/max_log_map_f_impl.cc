@@ -54,8 +54,8 @@ namespace gr {
                                            const char produce_bits, 
                                            const std::vector<int> &OS)
       : gr::block("max_log_map_f",
-              gr::io_signature::make(1, 2, sizeof(float)),
-              gr::io_signature::make(1, 2, sizeof(float))),
+              gr::io_signature::make(1, 1, sizeof(float)),
+              gr::io_signature::make(1, 1, sizeof(float))),
         d_n(n), // Number of Codebits in Codeword
         d_s(1<<(k-1)), // Number of Encoderstates
         d_k(k),   // constraint length
@@ -66,13 +66,17 @@ namespace gr {
         d_OS(OS) // Output Matrix
     {
       // Set scheduler behaviour, we want Blocks of predefined length as we are doing truncated codes
-      set_output_multiple(d_frame_size*d_produce_bits*n);
+      set_output_multiple(d_frame_size);
       size_t align = volk_fec_get_alignment();
+      
+      int shuffle[16] = {0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1};
       // Set all neccessary metrics
       d_dp = new struct decoder;
-      d_dp->gamma = (float*) volk_fec_malloc(sizeof(float)*(d_s<<1)*(d_frame_size+1), align);
+      d_dp->gamma = (float*) volk_fec_malloc(sizeof(float)*(1<<d_n)*(d_frame_size), align);
       d_dp->alpha = (float*) volk_fec_malloc(sizeof(float)*d_s*(d_frame_size+1), align);
       d_dp->beta = (float*) volk_fec_malloc(sizeof(float)*d_s*(d_frame_size+1), align);
+      
+      memcpy(d_dp->shuffle, shuffle, sizeof(int)*16);
 
       float log_equal = -log(d_s);
       printf("d_s: %d    log_equal: %f\n", d_s, log_equal);
@@ -80,9 +84,8 @@ namespace gr {
       {
         d_dp->alpha[i] = -INF;
         d_dp->beta[d_s*d_frame_size+i] = log_equal;
-        printf("**> alpha[%d] = %f\n**> beta[%d] = %f\n", 
-               i, d_dp->alpha[i], i+d_s*d_frame_size, d_dp->beta[d_frame_size*d_s+i]);
       }
+      d_dp->alpha[d_start_state] = 0;
     }
 
     /*
@@ -101,7 +104,7 @@ namespace gr {
     max_log_map_f_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       // Demand enough samples from the scheduler to produce output (Hopefully the scheduler obeys to this command!)
-      ninput_items_required[0] = noutput_items * d_produce_bits * d_n;
+      ninput_items_required[0] = noutput_items;
     }
 
     int
@@ -112,10 +115,11 @@ namespace gr {
     {
         const float *in = (const float *) input_items[0];
         float *out = (float *) output_items[0];
-        printf("hey\n");
+        printf("hey noutput_items: %d\n", noutput_items);
         
         int nblocks = noutput_items / d_frame_size;
-        for(int i = 0; i < nblocks; noutput_items)
+        printf("hey nblocks: %d\n", nblocks);
+        for(int i = 0; i < nblocks; i++)
         { 
           bcjr_f::bcjr_f(d_s, d_k, d_n, d_frame_size, 
                          d_start_state, d_end_state, d_OS,

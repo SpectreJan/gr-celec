@@ -47,21 +47,18 @@ class qa_max_log_map_f (gr_unittest.TestCase):
         fsm = fsm_args["awgn1o2_16"]
         os = numpy.array(fsm[4], dtype=int) 
         sym_table = [-3, 1, 1, 3]
+        data = numpy.array[-3.256, -4.566, 1.234, 3.245, -1.55, 4.345, 3.0, -3.0]
+        printf data
 
-        # Setup data source
-        data_src = blocks.file_source(1, "test.txt",0)
-        
-        # Setup Bitpacking/Bitunpacking (filesource reads chars, encoder wants bits :))
-        p2up = blocks.packed_to_unpacked_bb(1, 0)
-        up2p = blocks.unpacked_to_packed_bb(1, 0)
+        data_src = blocks.vector_source_f(map(float, data))
 
         # Set up TX
-        throt = blocks.throttle(1, 32000)
+        src_head = blocks.head(gr.sizeof_float*1, 8)
         encoder = trellis.encoder_bb(trellis.fsm(*fsm), 0)
         modulator = digital.chunks_to_symbols_bf(sym_table, 1)
         
         # Setup RX
-        max_log_map_cel = celec.max_log_map_f(2, 5, 5360, 0, -1, 1, os)
+        max_log_map_cel = celec.max_log_map_f(2, 5, 16*8, 0, -1, 1, os)
         conv = blocks.float_to_char()
         rx_sink = blocks.file_sink(1, "result.txt")
 

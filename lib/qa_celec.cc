@@ -36,8 +36,8 @@ qa_celec::suite()
 {
   CppUnit::TestSuite *s = new CppUnit::TestSuite("celec");
 
-  s->addTest(gr::celec::qa_gen_viterbi_fi::suite());
-  s->addTest(gr::celec::qa_metric_c::suite());
+  //s->addTest(gr::celec::qa_gen_viterbi_fi::suite());
+  //s->addTest(gr::celec::qa_metric_c::suite());
   s->addTest(gr::celec::qa_max_log_map_f::suite());
 
   return s;

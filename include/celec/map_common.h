@@ -27,6 +27,7 @@ struct decoder{
   float *gamma;
   float *alpha;
   float *beta;
+  int shuffle[16];
 };
 
 #endif /* INCLUDED_CELEC_MAP_COMMON_H */

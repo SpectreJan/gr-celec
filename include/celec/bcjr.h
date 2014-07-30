@@ -18,9 +18,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <stdio.h>
-#include <celec/bcjr.h>
-#include <volk_fec/volk_fec.h>
+#ifndef INCLUDED_VITERBI_H
+#define INCLUDED_VITERBI_H
+#include <vector>
+#include <gnuradio/gr_complex.h>
+#include <celec/map_common.h>
 
 namespace gr{
   namespace celec{
@@ -28,16 +30,8 @@ namespace gr{
       void bcjr_f(const int S, const int k, const int n, const int K, 
                   const int S0, int SK, const std::vector<int> &OS,
                   decoder *dp,
-                  const float *in, float *out)
-      {
-        volk_fec_32f_s32f_32i_calc_branch_metric_32f_manual(in, n,
-                                                            &dp->gamma[0], K, 
-                                                            "generic");
-        volk_fec_32f_x2_s32f_32i_x2_forward_recursion_32f_manual(dp->alpha,
-                                              dp->gamma, K, &OS[0], 
-                                              &dp->shuffle[0],
-                                              S, "generic");
-      }
+                  const float *in, float *out);
     }
-  }
-}
+  } // namespace celec
+} // namespace gr
+#endif /* INCLUDED_VITERBI_H */
