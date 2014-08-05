@@ -74,7 +74,7 @@ namespace gr {
       d_dp = new struct decoder;
       d_dp->gamma = (float*) volk_fec_malloc(sizeof(float)*(1<<d_n)*(d_frame_size), align);
       d_dp->alpha = (float*) volk_fec_malloc(sizeof(float)*d_s*(d_frame_size+1), align);
-      d_dp->beta = (float*) volk_fec_malloc(sizeof(float)*d_s*(d_frame_size+1), align);
+      d_dp->beta = (float*) volk_fec_malloc(sizeof(float)*d_s*(2), align);
       
       memcpy(d_dp->shuffle, shuffle, sizeof(int)*16);
 
