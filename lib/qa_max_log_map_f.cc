@@ -248,6 +248,98 @@ namespace gr {
       volk_fec_free(aligned_shuffle);
     }
 
+    void
+    qa_max_log_map_f::t4()
+    {
+      float INF = 1e9;
+      int N = 3072;  // Codebits
+      int iters = 100;
+      int S = 16;  // 16 States
+      int O = 4;
+      
+      double time_volk = 0; 
+      double time_generic = 0; 
+      clock_t t_volk, t;
+      
+      size_t align = volk_fec_get_alignment();
+      float *beta_generic;
+      beta_generic = (float*)volk_fec_malloc(sizeof(float)*S*(N/2+1), align);
+      
+      float *beta_sse;
+      beta_sse = (float*)volk_fec_malloc(sizeof(float)*(N/2+1)*S, align);
+      
+      float *alpha;
+      alpha = (float*) volk_fec_malloc(sizeof(float)*S*(N/2+1), align);
+
+      float *llr;
+      llr = (float*) volk_fec_malloc(sizeof(float)*N, align);
+
+      for(int i = 0; i < S; i++)
+      {  
+        beta_generic[i] = 0;
+        beta_sse[i] = 0;
+        alpha[i] = -INF;
+      }  
+      alpha[0] = 0;
+
+      for(int i = S; i < S*(N/2+1); i++)
+      {  
+        // Create random samples ranging from -4 to 4
+        alpha[i] = (float) (((float)::random()/RANDOM_MAX)*5);
+      }
+
+      float *in;
+      in = (float*) volk_fec_malloc(sizeof(float)*N*O, align);
+      for(int i = 0; i < N*O; i++)
+      {  
+        // Create random samples ranging from -4 to 4
+        in[i] = (float) (((float)::random()/RANDOM_MAX)*5);
+      }
+      
+      int OS[] = {0, 3, 3, 0, 1, 2, 2, 1, 1, 2, 2, 1, 0, 3, 3, 0, 2, 1, 1, 2, 3, 0, 0, 3, 3, 0, 0, 3, 2, 1, 1, 2};
+      int shuffle[] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1};
+
+      // Shufflevector for transitions 
+      int *aligned_shuffle;
+      aligned_shuffle = (int*) volk_fec_malloc(sizeof(int)*32, align);
+      memcpy(aligned_shuffle, shuffle, sizeof(int)*32);      
+
+      printf("\nRunning Backward Recursion and LLR tests\n");
+      for(int i = 0; i < iters; i++)
+      {
+        t = clock();
+        volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(alpha, &in[0], beta_generic, llr,
+                                                        2, N/2, &OS[0], aligned_shuffle,
+                                                        S, "generic");
+        t = clock()- t;
+        
+        t_volk = clock();
+        volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(alpha, &in[0], beta_sse, llr,
+                                                        2, N/2, &OS[0], aligned_shuffle,
+                                                        S, "a_sse4");            
+        t_volk = clock()-t_volk;
+          for(int i = 0; i < 2*S; i++)
+          {
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(beta_generic[i], beta_sse[i],
+                1e-4);
+            printf("beta_gen[%d] %f  beta_sse[%d] %f\n", i,beta_generic[i], i, beta_sse[i]);
+          }
+
+        time_volk += (double) t_volk;
+        time_generic += (double) t;       
+      
+      }
+      //printf("Time for sse4 : %f\n", time_volk/CLOCKS_PER_SEC/iters);
+      //printf("Time for generic: %f\n", time_generic/CLOCKS_PER_SEC/iters);
+
+      volk_fec_free(beta_generic);
+      volk_fec_free(beta_sse);
+      volk_fec_free(llr);
+      volk_fec_free(alpha);
+      volk_fec_free(in);
+      volk_fec_free(aligned_shuffle);
+    }
+
   } /* namespace celec */
 } /* namespace gr */
 

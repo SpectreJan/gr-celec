@@ -33,14 +33,16 @@ namespace gr {
     public:
       CPPUNIT_TEST_SUITE(qa_max_log_map_f);
       //CPPUNIT_TEST(t1);
-      CPPUNIT_TEST(t2);
-      CPPUNIT_TEST(t3);
+      //CPPUNIT_TEST(t2);
+      //CPPUNIT_TEST(t3);
+      CPPUNIT_TEST(t4);
       CPPUNIT_TEST_SUITE_END();
 
     private:
       void t1(); // generell block functions
       void t2(); // transition probabilities
       void t3(); // Forward Recursion
+      void t4(); // Backward Recursion + LLR
     };
 
   } /* namespace celec */
