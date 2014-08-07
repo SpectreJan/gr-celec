@@ -115,7 +115,7 @@ namespace gr {
     qa_max_log_map_f::t2()
     {
       // Set parameters and allocate memory
-      int num_runs = 100;
+      int num_runs = 1000;
       int N = 6144; // Number of input LLRs
       int n_cbit = 2; // Number of Codebits, must be at least 2
 
@@ -176,7 +176,7 @@ namespace gr {
     {
       float INF = 1e9;
       int N = 6144;  // Codebits
-      int iters = 100;
+      int iters = 1000;
       int S = 16;  // 16 States
       int O = 4;
       
@@ -252,8 +252,8 @@ namespace gr {
     qa_max_log_map_f::t4()
     {
       float INF = 1e9;
-      int N = 3072;  // Codebits
-      int iters = 100;
+      int N = 6144;  // Codebits
+      int iters = 1000;
       int S = 16;  // 16 States
       int O = 4;
       
@@ -271,8 +271,11 @@ namespace gr {
       float *alpha;
       alpha = (float*) volk_fec_malloc(sizeof(float)*S*(N/2+1), align);
 
-      float *llr;
-      llr = (float*) volk_fec_malloc(sizeof(float)*N, align);
+      float *llr_sse;
+      llr_sse = (float*) volk_fec_malloc(sizeof(float)*N, align);
+
+      float *llr_gen;
+      llr_gen = (float*) volk_fec_malloc(sizeof(float)*N, align);
 
       for(int i = 0; i < S; i++)
       {  
@@ -308,33 +311,41 @@ namespace gr {
       for(int i = 0; i < iters; i++)
       {
         t = clock();
-        volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(alpha, &in[0], beta_generic, llr,
+        volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(alpha, &in[0], beta_generic, llr_gen,
                                                         2, N/2, &OS[0], aligned_shuffle,
                                                         S, "generic");
         t = clock()- t;
         
         t_volk = clock();
-        volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(alpha, &in[0], beta_sse, llr,
+        volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(alpha, &in[0], beta_sse, llr_sse,
                                                         2, N/2, &OS[0], aligned_shuffle,
                                                         S, "a_sse4");            
         t_volk = clock()-t_volk;
-          for(int i = 0; i < 2*S; i++)
-          {
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(beta_generic[i], beta_sse[i],
-                1e-4);
-            printf("beta_gen[%d] %f  beta_sse[%d] %f\n", i,beta_generic[i], i, beta_sse[i]);
-          }
+
+        for(int i = 0; i < 2*S; i++)
+        {
+          CPPUNIT_ASSERT_DOUBLES_EQUAL(beta_generic[i], beta_sse[i],
+              1e-4);
+        }
+
+        for(int i = 0; i < N; i++)
+        {
+          CPPUNIT_ASSERT_DOUBLES_EQUAL(llr_sse[i], llr_gen[i],
+              1e-4);
+        }
 
         time_volk += (double) t_volk;
         time_generic += (double) t;       
       
       }
-      //printf("Time for sse4 : %f\n", time_volk/CLOCKS_PER_SEC/iters);
-      //printf("Time for generic: %f\n", time_generic/CLOCKS_PER_SEC/iters);
+      
+      printf("Time for sse4 : %f\n", time_volk/CLOCKS_PER_SEC/iters);
+      printf("Time for generic: %f\n", time_generic/CLOCKS_PER_SEC/iters);
 
       volk_fec_free(beta_generic);
       volk_fec_free(beta_sse);
-      volk_fec_free(llr);
+      volk_fec_free(llr_gen);
+      volk_fec_free(llr_sse);
       volk_fec_free(alpha);
       volk_fec_free(in);
       volk_fec_free(aligned_shuffle);

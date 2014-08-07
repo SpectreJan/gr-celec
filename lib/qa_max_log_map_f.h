@@ -33,8 +33,8 @@ namespace gr {
     public:
       CPPUNIT_TEST_SUITE(qa_max_log_map_f);
       //CPPUNIT_TEST(t1);
-      //CPPUNIT_TEST(t2);
-      //CPPUNIT_TEST(t3);
+      CPPUNIT_TEST(t2);
+      CPPUNIT_TEST(t3);
       CPPUNIT_TEST(t4);
       CPPUNIT_TEST_SUITE_END();
 
