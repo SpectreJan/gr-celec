@@ -92,16 +92,6 @@ namespace gr {
           printf("LLR[%d] %f\n", i, llr_out[i]);
         }
 
-        /*for (int i = 0; i < 20; ++i)
-        {
-          printf("Gamma[%d] %f\n", i, gamma[i]);
-        }
-        printf("\n");
-        /*for (int i = 0; i < 24; ++i)
-        {
-          printf("Alpha[%d] %f\n", i, alpha[i]);
-        }*/
-
         volk_fec_free(beta);
         volk_fec_free(llr_out);
         volk_fec_free(alpha);

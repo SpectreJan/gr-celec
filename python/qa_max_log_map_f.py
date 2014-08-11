@@ -44,31 +44,29 @@ class qa_max_log_map_f (gr_unittest.TestCase):
     def test_001_t (self):
 
         # Setup parameters of the System
-        fsm = fsm_args["awgn1o2_16"]
         os = numpy.array(fsm[4], dtype=int) 
         sym_table = [-3, 1, 1, 3]
-        data = numpy.array[-3.256, -4.566, 1.234, 3.245, -1.55, 4.345, 3.0, -3.0]
-        printf data
+        data = numpy.array([-5,-5,-5,-5,5,5,-5,5,5,-5])
+        expected_data = numpy.array([0,0,0,0,1,1,0,1,1,0])
+        print data
 
         data_src = blocks.vector_source_f(map(float, data))
 
         # Set up TX
-        src_head = blocks.head(gr.sizeof_float*1, 8)
-        encoder = trellis.encoder_bb(trellis.fsm(*fsm), 0)
-        modulator = digital.chunks_to_symbols_bf(sym_table, 1)
+        src_head = blocks.head(gr.sizeof_float*1, 10)
         
         # Setup RX
-        max_log_map_cel = celec.max_log_map_f(2, 5, 16*8, 0, -1, 1, os)
+        max_log_map_cel = celec.max_log_map_f(2, 4, 10, 0, -1, 1, os)
         conv = blocks.float_to_char()
-        rx_sink = blocks.file_sink(1, "result.txt")
+        rx_sink = blocks.vector_sink_f(1)
 
 
-        self.tb.connect(data_src, throt, p2up, encoder, modulator)
-        self.tb.connect(modulator, max_log_map_cel, conv, up2p, rx_sink)
+        self.tb.connect(data_src, src_head, max_log_map_cel, rx_sink)
 
         # set up fg
         self.tb.run ()
 
+        print rx_sink.data()
         # check data
 
 

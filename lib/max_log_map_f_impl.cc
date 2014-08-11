@@ -77,9 +77,10 @@ namespace gr {
       d_dp->beta = (float*) volk_fec_malloc(sizeof(float)*d_s*(2), align);
       
       memcpy(d_dp->shuffle, shuffle, sizeof(int)*16);
-
+      for(int i = 0; i <16; i++)
+        printf("shuffle[%d] %d\n", i, shuffle[i]);
+      
       float log_equal = -log(d_s);
-      printf("d_s: %d    log_equal: %f\n", d_s, log_equal);
       for(int i = 0; i < d_s; i++)
       {
         d_dp->alpha[i] = -INF;
@@ -115,10 +116,8 @@ namespace gr {
     {
         const float *in = (const float *) input_items[0];
         float *out = (float *) output_items[0];
-        printf("hey noutput_items: %d\n", noutput_items);
         
         int nblocks = noutput_items / d_frame_size;
-        printf("hey nblocks: %d\n", nblocks);
         for(int i = 0; i < nblocks; i++)
         { 
           bcjr_f::bcjr_f(d_s, d_k, d_n, d_frame_size, 

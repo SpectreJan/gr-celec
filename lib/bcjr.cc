@@ -32,11 +32,15 @@ namespace gr{
       {
         volk_fec_32f_s32f_32i_calc_branch_metric_32f_manual(in, n,
                                                             &dp->gamma[0], K, 
-                                                            "generic");
+                                                            "a_sse4");
         volk_fec_32f_x2_s32f_32i_x2_forward_recursion_32f_manual(dp->alpha,
                                               dp->gamma, K, &OS[0], 
                                               &dp->shuffle[0],
-                                              S, "generic");
+                                              S, "a_sse4");
+        volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(dp->alpha, dp->gamma,
+                                                       dp->beta, out,
+                                                       n, K, &OS[0], dp->shuffle,
+                                                       S, "a_sse4");
       }
     }
   }
