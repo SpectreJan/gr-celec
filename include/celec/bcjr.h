@@ -28,7 +28,8 @@ namespace gr{
   namespace celec{
     namespace bcjr_f{
       void bcjr_f(const int S, const int k, const int n, const int K, 
-                  const int S0, int SK, const std::vector<int> &OS,
+                  const int S0, int SK, 
+                  const std::vector<int> &shuffle, const std::vector<int> &OS,
                   decoder *dp,
                   const float *in, float *out);
     }

@@ -128,6 +128,7 @@ namespace gr {
       float time_generic = 0; 
       clock_t t_volk, t;
 
+      printf("Running branch metric tests\n");
       for(int i = 0; i < num_runs; i++)
       {
         t = clock();
@@ -205,6 +206,7 @@ namespace gr {
       aligned_shuffle = (int*) volk_fec_malloc(sizeof(int)*32, align);
       memcpy(aligned_shuffle, shuffle, sizeof(int)*32);      
 
+      printf("Running Forward Recursion tests\n");
       for(int i = 0; i < iters; i++)
       {
         t = clock();

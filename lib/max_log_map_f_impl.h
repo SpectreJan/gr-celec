@@ -36,13 +36,13 @@ namespace gr {
         int d_frame_size; 
         int d_start_state;
         int d_end_state;
-        char d_produce_bits; // 0 calculate llr for codebit / 1 calculate infobit
+        const std::vector<int> d_shuffle; // shuffle matrix for recursive codes
         const std::vector<int> d_OS; // Output Symbols
 
       public:
         max_log_map_f_impl(const int n, const int k, const int frame_size, 
                          const int start_state, const int end_state, 
-                         const char produce_bits, const std::vector<int> &OS);
+                         const std::vector<int> &shuffle, const std::vector<int> &OS);
         ~max_log_map_f_impl();
 
         // Where all the action really happens

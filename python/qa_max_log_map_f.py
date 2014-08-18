@@ -44,8 +44,8 @@ class qa_max_log_map_f (gr_unittest.TestCase):
     def test_001_t (self):
 
         # Setup parameters of the System
+        fsm = fsm_args["awgn1o2_16"]
         os = numpy.array(fsm[4], dtype=int) 
-        sym_table = [-3, 1, 1, 3]
         data = numpy.array([-5,-5,-5,-5,5,5,-5,5,5,-5])
         expected_data = numpy.array([0,0,0,0,1,1,0,1,1,0])
         print data
@@ -55,8 +55,9 @@ class qa_max_log_map_f (gr_unittest.TestCase):
         # Set up TX
         src_head = blocks.head(gr.sizeof_float*1, 10)
         
+        shuffle = numpy.array([0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,], dtype=int)
         # Setup RX
-        max_log_map_cel = celec.max_log_map_f(2, 4, 10, 0, -1, 1, os)
+        max_log_map_cel = celec.max_log_map_f(2, 4, 10, 0, -1, shuffle, os)
         conv = blocks.float_to_char()
         rx_sink = blocks.vector_sink_f(1)
 

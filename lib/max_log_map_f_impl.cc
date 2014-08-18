@@ -36,12 +36,13 @@ namespace gr {
 
     max_log_map_f::sptr
     max_log_map_f::make(const int n, const int k, const int frame_size, 
-                        const int start_state, const int end_state, 
-                        const char produce_bits, const std::vector<int> &OS)
+                        const int start_state, const int end_state,
+                        const std::vector<int> &shuffle, 
+                        const std::vector<int> &OS)
     {
       return gnuradio::get_initial_sptr
         (new max_log_map_f_impl(n, k, frame_size, start_state, end_state, 
-                                produce_bits, OS));
+                                shuffle, OS));
     }
 
     /*
@@ -51,7 +52,7 @@ namespace gr {
                                            const int frame_size, 
                                            const int start_state, 
                                            const int end_state, 
-                                           const char produce_bits, 
+                                           const std::vector<int> &shuffle, 
                                            const std::vector<int> &OS)
       : gr::block("max_log_map_f",
               gr::io_signature::make(1, 1, sizeof(float)),
@@ -62,29 +63,24 @@ namespace gr {
         d_frame_size(frame_size), // Trellislength
         d_start_state(start_state), // Initial State
         d_end_state(end_state), // Termination State
-        d_produce_bits(produce_bits), // Produce codebit LLR => d_produce_bits == 1
-        d_OS(OS) // Output Matrix
+        d_OS(OS), // Output Matrix
+        d_shuffle(shuffle)
     {
       // Set scheduler behaviour, we want Blocks of predefined length as we are doing truncated codes
       set_output_multiple(d_frame_size);
       size_t align = volk_fec_get_alignment();
       
-      int shuffle[16] = {0,1,1,0,1,0,0,1,0,1,1,0,1,0,0,1};
       // Set all neccessary metrics
       d_dp = new struct decoder;
       d_dp->gamma = (float*) volk_fec_malloc(sizeof(float)*(1<<d_n)*(d_frame_size), align);
       d_dp->alpha = (float*) volk_fec_malloc(sizeof(float)*d_s*(d_frame_size+1), align);
       d_dp->beta = (float*) volk_fec_malloc(sizeof(float)*d_s*(2), align);
       
-      memcpy(d_dp->shuffle, shuffle, sizeof(int)*16);
-      for(int i = 0; i <16; i++)
-        printf("shuffle[%d] %d\n", i, shuffle[i]);
-      
       float log_equal = -log(d_s);
       for(int i = 0; i < d_s; i++)
       {
         d_dp->alpha[i] = -INF;
-        d_dp->beta[d_s*d_frame_size+i] = log_equal;
+        d_dp->beta[d_s] = log_equal;
       }
       d_dp->alpha[d_start_state] = 0;
     }
@@ -121,9 +117,10 @@ namespace gr {
         for(int i = 0; i < nblocks; i++)
         { 
           bcjr_f::bcjr_f(d_s, d_k, d_n, d_frame_size, 
-                         d_start_state, d_end_state, d_OS,
-                         d_dp, 
-                         &in[i*d_frame_size*(d_produce_bits*d_n)], // Get to right position in LLR Buffer
+                         d_start_state, d_end_state,
+                         d_shuffle,
+                         d_OS, d_dp, 
+                         &in[i*d_frame_size*d_n], // Get to right position in LLR Buffer
                          &out[i*d_frame_size]);    // Get to the right position in 
         }
         // Tell runtime system how many input items we consumed on

@@ -48,7 +48,7 @@ namespace gr {
        */
       static sptr make(const int n, const int k, const int frame_size, 
                        const int start_state, const int end_state, 
-                       const char produce_bits, const std::vector<int> &OS);
+                       const std::vector<int> &shuffle, const std::vector<int> &OS);
     };
 
   } // namespace celec
@@ -56,3 +56,4 @@ namespace gr {
 
 #endif /* INCLUDED_CELEC_MAX_LOG_MAP_F_H */
 
+ 

@@ -25,9 +25,23 @@
 namespace gr{
   namespace celec{
     namespace bcjr_f{
+      /*! \brief Basic BCJR algorithm that uses volk_fec library
+          \param S Number of States
+          \param k Constraint length
+          \param n Number of codebits in codeword
+          \param K Packetlength (Infobit)
+          \param S0 Start State
+          \param SK End State
+          \param shuffle Shuffle Matrix for recursive codes
+          \param OS Encoder Outputs
+          \param dp Decoder struct
+          \param in Input LLR
+          \param out Output LLR
+      */
+
       void bcjr_f(const int S, const int k, const int n, const int K, 
-                  const int S0, int SK, const std::vector<int> &OS,
-                  decoder *dp,
+                  const int S0, int SK, const std::vector<int> &shuffle,
+                  const std::vector<int> &OS, decoder *dp,
                   const float *in, float *out)
       {
         volk_fec_32f_s32f_32i_calc_branch_metric_32f_manual(in, n,
@@ -35,11 +49,11 @@ namespace gr{
                                                             "a_sse4");
         volk_fec_32f_x2_s32f_32i_x2_forward_recursion_32f_manual(dp->alpha,
                                               dp->gamma, K, &OS[0], 
-                                              &dp->shuffle[0],
+                                              &shuffle[0],
                                               S, "a_sse4");
         volk_fec_32f_x4_32i_x4_llr_codebits_32f_manual(dp->alpha, dp->gamma,
                                                        dp->beta, out,
-                                                       n, K, &OS[0], dp->shuffle,
+                                                       n, K, &OS[0], &shuffle[0],
                                                        S, "a_sse4");
       }
     }

@@ -23,11 +23,16 @@
 #ifndef INCLUDED_CELEC_MAP_COMMON_H
 #define INCLUDED_CELEC_MAP_COMMON_H
 
+/*! \brief Decoder struct 
+  \param gamma (log) State Transtition Probabilities
+  \param alpha (log) Forward Recursion Probabilities
+  \param beta (log) Bacḱward Recursion Probabilities
+*/
+
 struct decoder{
   float *gamma;
   float *alpha;
   float *beta;
-  int shuffle[16];
 };
 
 #endif /* INCLUDED_CELEC_MAP_COMMON_H */
