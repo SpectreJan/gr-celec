@@ -18,38 +18,24 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef INCLUDED_CELEC_GEN_VITERBI_FI_IMPL_H
-#define INCLUDED_CELEC_GEN_VITERBI_FI_IMPL_H
+#ifndef INCLUDED_CELEC_METRIC_C_IMPL_H
+#define INCLUDED_CELEC_METRIC_C_IMPL_H
 
-#include <celec/gen_viterbi_fi.h>
-#include <celec/viterbi.h>
+#include <celec/metric_c.h>
 
 namespace gr {
   namespace celec {
 
-    class gen_viterbi_fi_impl : public gen_viterbi_fi
+    class metric_c_impl : public metric_c
     {
      private:
-      int d_n; // Inverse Coderate
-      int d_k; // Constraint length
-      int d_s; // Number of States
-      int d_frame_size; 
-      int d_start_state;
-      int d_end_state;
-      const std::vector<int> d_OS; // Output Symbols
-      const std::vector<gr_complex> d_Table; // Tx Symbol Table
+      int d_O;
+      std::vector<gr_complex> d_Table;
+
 
      public:
-      gen_viterbi_fi_impl(const int n, const int k, const int frame_size,
-                          const int start_state, const int end_state,
-                          const std::vector<gr_complex> &Table, 
-                          const std::vector<int> &OS);
-      ~gen_viterbi_fi_impl();
-      int rate() { return d_n; }
-      int s() { return d_s; }
-      int frame_size() { return d_frame_size; }
-      int end_state() { return d_end_state; }
-      int start_state() { return d_start_state; }
+      metric_c_impl(int O, const std::vector<gr_complex> &TABLE);
+      ~metric_c_impl();
 
       // Where all the action really happens
       void forecast (int noutput_items, gr_vector_int &ninput_items_required);
@@ -63,5 +49,5 @@ namespace gr {
   } // namespace celec
 } // namespace gr
 
-#endif /* INCLUDED_CELEC_GEN_VITERBI_FI_IMPL_H */
+#endif /* INCLUDED_CELEC_METRIC_C_IMPL_H */
 

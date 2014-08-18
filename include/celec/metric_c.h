@@ -19,43 +19,38 @@
  */
 
 
-#ifndef INCLUDED_CELEC_GEN_VITERBI_FI_H
-#define INCLUDED_CELEC_GEN_VITERBI_FI_H
+#ifndef INCLUDED_CELEC_METRIC_C_H
+#define INCLUDED_CELEC_METRIC_C_H
 
 #include <celec/api.h>
 #include <gnuradio/block.h>
-#include <celec/viterbi.h>
-#include <vector>
 
 namespace gr {
   namespace celec {
 
     /*!
-     * \brief Generic Rate 1/n Viterbi Decoder
+     * \brief <+description of block+>
      * \ingroup celec
      *
      */
-    class CELEC_API gen_viterbi_fi : virtual public gr::block
+    class CELEC_API metric_c : virtual public gr::block
     {
      public:
-      typedef boost::shared_ptr<gen_viterbi_fi> sptr;
+      typedef boost::shared_ptr<metric_c> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of celec::gen_viterbi_fi.
+       * \brief Return a shared_ptr to a new instance of celec::metric_c.
        *
-       * To avoid accidental use of raw pointers, celec::gen_viterbi_fi's
+       * To avoid accidental use of raw pointers, celec::metric_c's
        * constructor is in a private implementation
-       * class. celec::gen_viterbi_fi::make is the public interface for
+       * class. celec::metric_c::make is the public interface for
        * creating new instances.
        */
-      static sptr make(const int n, const int k, const int frame_size,
-                       const int start_state, const int end_state,
-                       const std::vector<gr_complex> &Table,   
-                       const std::vector<int> &OS);
+      static sptr make(int O, const std::vector<gr_complex> &TABLE);
     };
 
   } // namespace celec
 } // namespace gr
 
-#endif /* INCLUDED_CELEC_GEN_VITERBI_FI_H */
+#endif /* INCLUDED_CELEC_METRIC_C_H */
 

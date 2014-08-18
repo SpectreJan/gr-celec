@@ -24,13 +24,14 @@ include(GrPlatform) #define LIB_SUFFIX
 
 include_directories(${Boost_INCLUDE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR}/../include
-                    ${GR_INCLUDE_DIR}
-                    /opt/volk_fec/include)
+                    ${GR_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND celec_sources
     viterbi.cc
+    bcjr.cc
     gen_viterbi_fi_impl.cc
-)
+    metric_c_impl.cc
+    max_log_map_f_impl.cc )
 
 set(celec_sources "${celec_sources}" PARENT_SCOPE)
 if(NOT celec_sources)
@@ -39,7 +40,7 @@ if(NOT celec_sources)
 endif(NOT celec_sources)
 
 add_library(gnuradio-celec SHARED ${celec_sources})
-target_link_libraries(gnuradio-celec ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} /opt/volk_fec/lib/libvolk_fec.so)
+target_link_libraries(gnuradio-celec ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES} /usr/local/lib/libvolk_fec.so)
 set_target_properties(gnuradio-celec PROPERTIES DEFINE_SYMBOL "gnuradio_celec_EXPORTS")
 
 if(APPLE)
@@ -66,6 +67,8 @@ include_directories(${CPPUNIT_INCLUDE_DIRS})
 list(APPEND test_celec_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/test_celec.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_celec.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_max_log_map_f.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_metric_c.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/qa_gen_viterbi_fi.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/)
 
@@ -77,7 +80,7 @@ target_link_libraries(
   ${Boost_LIBRARIES}
   ${CPPUNIT_LIBRARIES}
   gnuradio-celec
-  /opt/volk_fec/lib/libvolk_fec.so
+  /usr/local/lib/libvolk_fec.so
 )
 
 GR_ADD_TEST(test_celec test-celec)

@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /* 
- * Copyright 2014 Jan Krämer.
+ * Copyright 2014 <+YOU OR YOUR COMPANY+>.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,29 @@
  * Boston, MA 02110-1301, USA.
  */
 
- #ifndef INCLUDED_VITERBI_H
- #define INCLUDED_VITERBI_H
- #include <vector>
- #include <gnuradio/gr_complex.h>
 
-namespace gr{
-  namespace celec{
-    namespace viterbi_fi{
-      void viterbi_fi(const int S, const int k, const int o, const int K, 
-                      const int S0, int SK, const std::vector<int> &OS,
-                      const std::vector<gr_complex> &Table,
-                      const gr_complex *in, unsigned char *out);
-    }
-  } // namespace celec
-} // namespace gr
-#endif /* INCLUDED_VITERBI_H */
+#ifndef _QA_METRIC_C_H_
+#define _QA_METRIC_C_H_
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/TestCase.h>
+
+namespace gr {
+  namespace celec {
+
+    class qa_metric_c : public CppUnit::TestCase
+    {
+    public:
+      CPPUNIT_TEST_SUITE(qa_metric_c);
+      CPPUNIT_TEST(t1);
+      CPPUNIT_TEST_SUITE_END();
+
+    private:
+      void t1();
+    };
+
+  } /* namespace celec */
+} /* namespace gr */
+
+#endif /* _QA_METRIC_C_H_ */
+

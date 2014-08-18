@@ -18,18 +18,20 @@
  * Boston, MA 02110-1301, USA.
  */
 
- #ifndef INCLUDED_VITERBI_H
- #define INCLUDED_VITERBI_H
- #include <vector>
- #include <gnuradio/gr_complex.h>
+#ifndef INCLUDED_VITERBI_H
+#define INCLUDED_VITERBI_H
+#include <vector>
+#include <gnuradio/gr_complex.h>
+#include <celec/map_common.h>
 
 namespace gr{
   namespace celec{
-    namespace viterbi_fi{
-      void viterbi_fi(const int S, const int k, const int o, const int K, 
-                      const int S0, int SK, const std::vector<int> &OS,
-                      const std::vector<gr_complex> &Table,
-                      const gr_complex *in, unsigned char *out);
+    namespace bcjr_f{
+      void bcjr_f(const int S, const int k, const int n, const int K, 
+                  const int S0, int SK, 
+                  const std::vector<int> &shuffle, const std::vector<int> &OS,
+                  decoder *dp,
+                  const float *in, float *out);
     }
   } // namespace celec
 } // namespace gr

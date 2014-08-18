@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /* 
- * Copyright 2014 Jan Krämer.
+ * Copyright 2014 <+YOU OR YOUR COMPANY+>.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +18,35 @@
  * Boston, MA 02110-1301, USA.
  */
 
- #ifndef INCLUDED_VITERBI_H
- #define INCLUDED_VITERBI_H
- #include <vector>
- #include <gnuradio/gr_complex.h>
 
-namespace gr{
-  namespace celec{
-    namespace viterbi_fi{
-      void viterbi_fi(const int S, const int k, const int o, const int K, 
-                      const int S0, int SK, const std::vector<int> &OS,
-                      const std::vector<gr_complex> &Table,
-                      const gr_complex *in, unsigned char *out);
-    }
-  } // namespace celec
-} // namespace gr
-#endif /* INCLUDED_VITERBI_H */
+#ifndef _QA_MAX_LOG_MAP_F_H_
+#define _QA_MAX_LOG_MAP_F_H_
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/TestCase.h>
+
+namespace gr {
+  namespace celec {
+
+    class qa_max_log_map_f : public CppUnit::TestCase
+    {
+    public:
+      CPPUNIT_TEST_SUITE(qa_max_log_map_f);
+      //CPPUNIT_TEST(t1);
+      CPPUNIT_TEST(t2);
+      CPPUNIT_TEST(t3);
+      CPPUNIT_TEST(t4);
+      CPPUNIT_TEST_SUITE_END();
+
+    private:
+      void t1(); // generell block functions
+      void t2(); // transition probabilities
+      void t3(); // Forward Recursion
+      void t4(); // Backward Recursion + LLR
+    };
+
+  } /* namespace celec */
+} /* namespace gr */
+
+#endif /* _QA_MAX_LOG_MAP_F_H_ */
+

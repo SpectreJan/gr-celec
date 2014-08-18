@@ -9,7 +9,14 @@
 
 %{
 #include "celec/gen_viterbi_fi.h"
+#include "celec/metric_c.h"
+#include "celec/max_log_map_f.h"
 %}
 
 %include "celec/gen_viterbi_fi.h"
 GR_SWIG_BLOCK_MAGIC2(celec, gen_viterbi_fi);
+%include "celec/metric_c.h"
+GR_SWIG_BLOCK_MAGIC2(celec, metric_c);
+
+%include "celec/max_log_map_f.h"
+GR_SWIG_BLOCK_MAGIC2(celec, max_log_map_f);
